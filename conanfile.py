@@ -3,10 +3,10 @@ import os
 
 
 class LibnameConan(ConanFile):
-    name = "libname"
+    name = "ModernVRML"
     description = "Keep it short"
     topics = ("conan", "libname", "logging")
-    url = "https://github.com/bincrafters/conan-libname"
+    url = "https://github.com/themhmoritz3/conan-ModernVRML"
     homepage = "https://github.com/original_author/original_lib"
     license = "MIT"  # Indicates license type of the packaged library; please use SPDX Identifiers https://spdx.org/licenses/
     exports_sources = ["CMakeLists.txt"]
@@ -21,7 +21,8 @@ class LibnameConan(ConanFile):
     _cmake = None
 
     requires = (
-        "zlib/1.2.11"
+        "zlib/1.2.11",
+        "boost/1.72.0"
     )
 
     def config_options(self):
@@ -29,9 +30,11 @@ class LibnameConan(ConanFile):
             del self.options.fPIC
 
     def source(self):
-        tools.get(**self.conan_data["sources"][self.version])
-        extracted_dir = self.name + "-" + self.version
-        os.rename(extracted_dir, self._source_subfolder)
+        git = tools.Git(folder=self._source_subfolder)
+        git.clone("https://github.com/TheMHMoritz3/ModernVRML.git", "master")
+        #tools.get(**self.conan_data["sources"][self.version])
+        #extracted_dir = self.name + "-" + self.version
+        #os.rename(extracted_dir, self._source_subfolder)
 
     def _configure_cmake(self):
         if not self._cmake:
