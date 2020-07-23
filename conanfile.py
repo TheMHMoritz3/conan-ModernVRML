@@ -9,12 +9,14 @@ class LibnameConan(ConanFile):
     url = "https://github.com/themhmoritz3/conan-ModernVRML"
     homepage = "https://github.com/original_author/original_lib"
     license = "MIT"  # Indicates license type of the packaged library; please use SPDX Identifiers https://spdx.org/licenses/
-    exports_sources = ["CMakeLists.txt"]
+    exports_sources = ["CMakeLists.txt", "source_subfolder"]
     generators = "cmake"
 
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
+
+    version = "alpha-0.1"
 
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
@@ -32,6 +34,13 @@ class LibnameConan(ConanFile):
     def source(self):
         git = tools.Git(folder=self._source_subfolder)
         git.clone("https://github.com/TheMHMoritz3/ModernVRML.git", "master")
+        tools.replace_in_file(self._source_subfolder+"/CMakeLists.txt", "project(ModernVRML VERSION 0.0.1 DESCRIPTION \"mylib description\")",
+                              '''if(EXISTS "${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake")
+  include("${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake")
+else()
+  include(../conanbuildinfo.cmake)
+endif()
+conan_basic_setup()''')
         #tools.get(**self.conan_data["sources"][self.version])
         #extracted_dir = self.name + "-" + self.version
         #os.rename(extracted_dir, self._source_subfolder)
@@ -40,7 +49,7 @@ class LibnameConan(ConanFile):
         if not self._cmake:
             self._cmake = CMake(self)
             self._cmake.definitions["BUILD_TESTS"] = False  # example
-            self._cmake.configure(build_folder=self._build_subfolder)
+            self._cmake.configure(source_folder=self._source_subfolder, build_folder=self._build_subfolder)
         return self._cmake
 
     def build(self):
