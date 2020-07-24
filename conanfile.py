@@ -16,7 +16,7 @@ class LibnameConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
 
-    version = "alpha-0.1"
+    version = "alpha-1"
 
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
